@@ -1,0 +1,16 @@
+# Java / Spring Boot
+target/
+*.log
+*.jar
+*.war
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Node (若未來加)
+node_modules/
+
+# OS 系統檔案
+.DS_Store
+Thumbs.db

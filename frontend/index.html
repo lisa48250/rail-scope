@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>RailScope 火車查詢系統 - 車站清單</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Font（讓文字更美） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+      body {
+          font-family: 'Noto Sans TC', sans-serif;
+      }
+  </style>
+</head>
+
+<body class="bg-gray-100">
+
+  <!-- Header -->
+  <header class="bg-blue-700 text-white py-4 shadow">
+    <div class="max-w-6xl mx-auto px-4">
+      <h1 class="text-xl font-bold">🚆 RailScope 火車查詢系統</h1>
+      <p class="text-sm opacity-80">台灣車站查詢 / 線上資料平台</p>
+    </div>
+  </header>
+
+  <!-- 主容器 -->
+  <main class="max-w-6xl mx-auto px-4 py-8">
+
+    <!-- 查詢區塊卡片 -->
+    <div class="bg-white p-6 rounded-lg shadow mb-8">
+      <h2 class="text-lg font-bold mb-4">📍 車站列表</h2>
+
+      <button id="loadBtn"
+              class="px-5 py-2 rounded bg-blue-600 text-white font-medium shadow hover:bg-blue-700 transition">
+        載入所有車站
+      </button>
+
+      <div id="errorBox" class="mt-4 text-red-600 text-sm hidden"></div>
+    </div>
+
+    <!-- 資料表 -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+      <table class="min-w-full text-sm">
+        <thead class="bg-gray-200 border-b">
+          <tr>
+            <th class="px-4 py-3 text-left font-semibold">縣市名稱</th>
+            <th class="px-4 py-3 text-left font-semibold">車站名稱</th>
+            <th class="px-4 py-3 text-left font-semibold">City ID</th>
+            <th class="px-4 py-3 text-left font-semibold">Station ID</th>
+          </tr>
+        </thead>
+        <tbody id="stationTableBody">
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-10 py-4 text-center text-gray-500 text-sm">
+    RailScope 火車查詢系統 · 作品集專案 · 由 Mia 製作
+  </footer>
+
+  <script src="./js/station.js"></script>
+</body>
+</html>
