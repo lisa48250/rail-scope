@@ -20,8 +20,6 @@ public class StationInformationController {
 
 	private final StationInformationService stationInformationService;
 	
-	
-	
 	//查詢所有縣市車站
 	@GetMapping("/all")
 	public List<QueryStationRespVo> queryStationAll(){
