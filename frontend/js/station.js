@@ -59,7 +59,7 @@ function loadStations() {
       return response.json();
     })
     .then(data => {
-      stationData = data;   // <-- 儲存在全域變數
+      stationData = data.data;   // <-- 儲存在全域變數
       console.log("資料載入成功，stationData =", stationData);
       stationData.forEach(item => {
         const city = item.cityName;
@@ -68,11 +68,11 @@ function loadStations() {
         if (!cityMap[city]) {
           cityMap[city] = [];
         }
-      
         // 將車站塞入該縣市底下
         cityMap[city].push({
           stationName: item.stationName,
-          stationId: item.stationId
+          stationId: item.stationId,
+          cityId: item.cityId
         });
       });
 
@@ -85,32 +85,49 @@ function loadStations() {
 
 
 //------------------查詢各縣市車站------------------\\
-row1Btns.forEach(btn => {
-  btn.addEventListener("click", showTable);
-});
-
 // 記錄「目前是誰打開 popup」：出發站 or 到達站
 let currentTargetBtn = null;
 
+
 // 顯示彈出視窗
 function showTable() {
+
+  let selectedCityId = null;
+  if (currentTargetBtn.dataset && currentTargetBtn.dataset.cityId) {
+    selectedCityId = parseInt(currentTargetBtn.dataset.cityId, 10);
+  }
+
+  let selectedStationId = null;
+  if (currentTargetBtn.dataset && currentTargetBtn.dataset.stationId) {
+    selectedStationId = parseInt(currentTargetBtn.dataset.stationId, 10);
+  }
+
+  console.log("selectedCityId =", selectedCityId, "selectedStationId =", selectedStationId);
+
   popup.classList.remove("hidden");
-  // 每次打開都重畫一次清單
-  renderCityList();
+  renderCityList(selectedCityId, selectedStationId);
 }
 
 
 // ===== 畫左邊：縣市清單 =====
-function renderCityList() {
+// selectedCityId: 目前按鈕上的 cityId（用來標記選中縣市）
+// selectedStationId: 目前按鈕上的 stationId（之後傳給右邊用）
+function renderCityList(selectedCityId, selectedStationId) {
   cityListEl.innerHTML = "";      // 清空舊資料
   stationListEl.innerHTML = "";   // 清空右邊車站
 
   const cityNames = Object.keys(cityMap); // 取得所有縣市名稱
 
+  let hasActiveCity = false; // 用來判斷有沒有按到「指定的 cityId」
+
   cityNames.forEach((cityName, index) => {
     const btn = document.createElement("button");
     btn.className = "popup-item";
     btn.textContent = cityName;
+
+    const stations = cityMap[cityName] || [];
+    // 假設同一縣市的 station.cityId 都相同，取第一筆就好
+    const cityIdOfThisButton = stations.length > 0 ? stations[0].cityId : null;
 
     // 點某個縣市 → 右邊顯示該縣市車站
     btn.addEventListener("click", () => {
@@ -122,22 +139,45 @@ function renderCityList() {
       // 標記目前這個為選中
       btn.classList.add("active");
 
-      // 顯示該縣市所有車站
-      renderStations(cityName);
+      // 顯示該縣市所有車站（此時不需要特別標 station，selectedStationId 傳 null）
+      renderStations(cityName, null);
     });
+
+    // 判斷要不要預設標記「選中的城市」
+    if (selectedCityId != null && cityIdOfThisButton === selectedCityId) {
+      // 若 cityId 跟目前按鈕上的 cityId 相符 → 設為 active
+      btn.classList.add("active");
+      hasActiveCity = true;
+      // 右邊車站用 selectedStationId 來標記「目前站」
+      renderStations(cityName, selectedStationId);
+    }
 
     cityListEl.appendChild(btn);
 
-    // 預設選第一個縣市
-    if (index === 0) {
+    // 如果完全沒有 selectedCityId（例如一開始沒有設定）
+    // 就沿用原本「預設選第一個縣市」
+    if (selectedCityId == null && index === 0) {
       btn.classList.add("active");
-      renderStations(cityName);
+      renderStations(cityName, selectedStationId ?? null);
     }
   });
+
+  // 如果有 selectedCityId 卻沒對應任何城市（資料不一致）
+  // 就 fallback 到第一個城市
+  if (selectedCityId != null && !hasActiveCity && cityNames.length > 0) {
+    const firstBtn = cityListEl.querySelector(".popup-item");
+    if (firstBtn) {
+      firstBtn.classList.add("active");
+      renderStations(cityNames[0], selectedStationId ?? null);
+    }
+  }
 }
 
+
 // ===== 畫右邊：某縣市的所有車站 =====
-function renderStations(cityName) {
+// cityName: 左邊選中的縣市
+// selectedStationId: 要標記為選中的車站 ID（可能是出發或抵達按鈕上的）
+function renderStations(cityName, selectedStationId) {
   stationListEl.innerHTML = ""; // 清空右邊
 
   const stations = cityMap[cityName] || [];
@@ -147,13 +187,24 @@ function renderStations(cityName) {
     btn.className = "popup-item";
     btn.textContent = st.stationName;
 
-    // 點某個車站 → 把站名帶回出發/到達按鈕 + 關閉 popup
+    // 如果有指定 selectedStationId，且 stationId 相同 → 標記為選中
+    if (selectedStationId != null && st.stationId === selectedStationId) {
+      btn.classList.add("active");
+      console.log("========================標記為選中:"+selectedStationId)
+    }
+
+    // 點某個車站 → 把站名 & id 帶回出發/到達按鈕 + 關閉 popup
     btn.addEventListener("click", () => {
       if (currentTargetBtn) {
-        currentTargetBtn.textContent = st.stationName; // 把站名塞回原本按鈕
+        // 把車站名稱塞回 setOffBtn / ArrivalBtn 的文字
+        currentTargetBtn.textContent = st.stationName;
+        // 更新按鈕身上的 cityId & stationId
+        currentTargetBtn.dataset.cityId = st.cityId;
         currentTargetBtn.dataset.stationId = st.stationId;
-        console.log("st.stationName:"+st.stationName);
-        console.log("st.stationId:"+st.stationId);
+
+        console.log("選擇站名:", st.stationName);
+        console.log("選擇站ID:", st.stationId);
+        console.log("選擇縣市ID:", st.cityId);
       }
       popup.classList.add("hidden"); // 關閉 popup
     });
@@ -161,10 +212,10 @@ function renderStations(cityName) {
     stationListEl.appendChild(btn);
   });
 }
-
 // ===== 綁定：點「出發站」按鈕時，打開 popup =====
 setOffBtn.addEventListener("click", () => {
   currentTargetBtn = setOffBtn;  // 代表這次是要選「出發站」
+  console.log(" 代表這次是要選「出發站」");
   showTable();
 });
 
@@ -241,9 +292,9 @@ function fillNowTime() {
 
 //------------------設定"對號"or"非對號"車種------------------\\
 const vehicleOptions = [
-  { text: "全部", value: null },
+  { text: "全部", value: 0 },
   { text: "對號", value: 1 },
-  { text: "非對號", value: 0 }
+  { text: "非對號", value: 2 }
 ];
 
 // 記錄目前索引（從 0 = 全部 開始）
@@ -313,71 +364,3 @@ function test(){
 
 
 
-
-//觸發站點查詢table
-// row1Btns.forEach((btn) => {
-//   btn.addEventListener("click", showTable);
-// });
-
-// function showTable() {
-//   console.log("showTable");
-
-//   // 1. 建立 div
-//   const newDiv = document.createElement("div");
-//   // 2. 設定內容（你可以放中文或 HTML）
-//   newDiv.textContent = "這是 showTable 新增的內容";
-
-//   // 3. 設定 style（可選）
-//   newDiv.style.padding = "10px";
-//   newDiv.style.backgroundColor = "#e5e7eb"; // Tailwind: bg-gray-200
-//   newDiv.style.marginTop = "10px";
-//   // 4. 加到畫面中（body 最後）
-//   document.body.appendChild(newDiv);
-// }
-
-// loadBtn.addEventListener("click", loadStations);
-
-// async function loadStations() {
-//   // 清空 UI
-//   errorBox.classList.add("hidden");
-//   errorBox.textContent = "";
-//   tableBody.innerHTML = "";
-
-//   try {
-//     // 呼叫後端 API
-//     const response = await axios.get(API_URL);
-//     const data = response.data;
-
-//     console.log("後端回傳資料:", data);
-
-//     // 檢查資料格式
-//     if (!Array.isArray(data)) {
-//       throw new Error("後端回傳格式不是陣列");
-//     }
-
-//     // 渲染表格
-//     data.forEach((item) => {
-//       const tr = document.createElement("tr");
-//       tr.className = "border-b";
-
-//       tr.innerHTML = `
-//         <td class="px-4 py-2">${item.cityName}</td>
-//         <td class="px-4 py-2">${item.stationName}</td>
-//         <td class="px-4 py-2">${item.cityId}</td>
-//         <td class="px-4 py-2">${item.stationId}</td>
-//       `;
-
-//       tableBody.appendChild(tr);
-//     });
-//   } catch (err) {
-//     console.error("API 錯誤:", err);
-
-//     // 錯誤訊息顯示在畫面上
-//     const msg = err.response
-//       ? `後端錯誤：HTTP ${err.response.status}`
-//       : `連線錯誤：${err.message}`;
-
-//     errorBox.textContent = msg;
-//     errorBox.classList.remove("hidden");
-//   }
-// }

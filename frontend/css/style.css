@@ -1,8 +1,8 @@
-html,
-body {
+/* X、Y 捲動條都關掉 */
+/* html,body {
   height: 100%;
-  overflow: hidden; /* X、Y 捲動條都關掉 */
-}
+  overflow: hidden; 
+} */
 
 /* ----------------------------label----------------------------- */
 
@@ -21,7 +21,7 @@ body {
 .row1Btn {
   /* btn大小 */
   height: 60px;
-  width: 300px;
+  width: 350px;
 
   /* btn圓角 */
   border-radius: 0.25rem; /* 4px */
@@ -58,7 +58,7 @@ body {
 .roundTripBtn {
   /* btn大小 */
   height: 60px;
-  width: 300px;
+  width: 360px;
 
   font-size: 50px;
 
@@ -78,7 +78,7 @@ body {
 .row2-1Btn {
   /* btn大小 */
   height: 50px;
-  width: 700px;
+  width: 770px;
 
   /* btn圓角 */
   border-radius: 0.25rem; /* 4px */
@@ -109,7 +109,7 @@ body {
 .row2-2Btn {
   /* btn大小 */
   height: 50px;
-  width: 187px;
+  width: 280px;
 
   /* btn圓角 */
   border-radius: 0.25rem; /* 4px */
@@ -140,7 +140,7 @@ body {
 .row3Btn {
   /* btn大小 */
   height: 50px;
-  width: 290px;
+  width: 343px;
 
   /* btn圓角 */
   border-radius: 0.25rem; /* 4px */
@@ -173,7 +173,7 @@ body {
 .row4Btn {
   /* btn大小 */
   height: 70px;
-  width: 910px;
+  width: 1070px;
 
   /* btn圓角 */
   border-radius: 0.25rem; /* 4px */
