@@ -19,21 +19,20 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/insertTestData")
 public class InsertTestDataController {
 
-	private final InsertTestDataMapper insertTestDataMapper;
-	
 	private final insertTestDataService insertTestDataService;
 	
-	@PostMapping("/queryTrain")
-	public ApiResponse<?> queryNewestTrainData(@RequestBody TrainModel model) {
-		String result = insertTestDataMapper.queryNewestTrainData(model);
+	//單筆新增train、trainStopTime資料
+	@PostMapping("/insertTrainWithStops")
+	public ApiResponse<?> insertTrainWithStops(@RequestBody TrainModel reqVo) {
+		int result = insertTestDataService.insertTrainWithStops(reqVo);
 		
 		return ApiResponse.ok(result);
 	}
 	
-	@PostMapping("/insertData")
-	public ApiResponse<?> insertTestData(@RequestBody TrainModel reqVo) {
-		int insertNumber = insertTestDataService.insertTestData(reqVo);
-		
-		return ApiResponse.ok(insertNumber);
+	//多筆新增train、trainStopTime資料
+	@PostMapping("/insertBatchTrainWithStops")
+	public ApiResponse<?> insertBatchTrainWithStops(@RequestBody TrainModel reqVo) {
+		int result = insertTestDataService.insertBatchTrainWithStops(reqVo);
+		return ApiResponse.ok(result);
 	}
 }

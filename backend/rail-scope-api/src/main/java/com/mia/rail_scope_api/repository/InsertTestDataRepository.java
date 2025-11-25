@@ -26,7 +26,7 @@ public class InsertTestDataRepository {
 		
 		String result = insertTestDataMapper.queryNewestTrainData(model);
 		
-		if(StringUtils.isBlank(result)) {
+		if(result == null) {
 			throw new IllegalStateException("查無此火車班次");
 		}
 		return result;
@@ -35,16 +35,21 @@ public class InsertTestDataRepository {
 	/**
 	 * 新增車次資料
 	 */
-	public void insertTrainTestData(TrainModel model) {
-		insertTestDataMapper.insertTrainTestData(model);
+	public void insertTrainTestData(String trainNo,int trainTypeId,int direction) {
+		int result =  insertTestDataMapper.insertTrainTestData(trainNo,trainTypeId, direction);
+	    if (result == 0) {
+	        throw new IllegalStateException("未新增任何 train 資料");
+	    }
 	}
 	
 	/**
 	 * 新增車次行駛資料
 	 */
-	public int insertTrainStopTimeTestData(String newTrainNo, String oldTrainNo) {
-		int result = insertTestDataMapper.insertTrainStopTimeTestData(newTrainNo,oldTrainNo);
+	public int insertTrainStopTimeTestData(String newTrainNo, String oldTrainNo, int time) {
+		int result = insertTestDataMapper.insertTrainStopTimeTestData(newTrainNo,oldTrainNo,time);
+	    if (result == 0) {
+	        throw new IllegalStateException("未新增任何 trainStopTime 資料");
+	    }
 		return result;
 	}
 }
-

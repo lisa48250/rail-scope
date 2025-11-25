@@ -11,11 +11,11 @@ import com.mia.rail_scope_api.responseVo.QueryStationRespVo;
 public interface CityMapper {
 
 	@Select("select  "
-			+ "c.cityName "
-			+ ",s.stationName "
-			+ ",c.cityId "
-			+ ",s.stationId "
-			+ "from city c join station s on c.cityId = s.cityId "
-			+ "order by c.cityId , s.stationId asc")
+			+ "c.cityName  "
+			+ ",s.stationName  "
+			+ ",c.cityId  "
+			+ ",s.lineOrder as stationId "
+			+ "from city c join station s on c.cityId = s.cityId  "
+			+ "order by c.cityId , s.lineOrder asc")
 	List<QueryStationRespVo> queryStationAll ();
 }

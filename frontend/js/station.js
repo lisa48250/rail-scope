@@ -1,22 +1,22 @@
 //-------------------------------------後端服務-----------------------------------------------\\
 const API_URL = "http://localhost:8080/api/stationInformation/all";
+const API_URL_QUERY = "http://localhost:8080/api/queryTrainTimetable/query";
 
 //-------------------------------------宣告全域變數-----------------------------------------------\\
 const loadBtn = document.getElementById("loadBtn");
 const tableBody = document.getElementById("stationTableBody");
 const errorBox = document.getElementById("errorBox");
 
-
 // 出發站按鈕
-const setOffBtn = document.getElementById("setOffBtn");   
+const setOffBtn = document.getElementById("setOffBtn");
 // 到達站按鈕
-const arrivalBtn = document.getElementById("ArrivalBtn"); 
+const arrivalBtn = document.getElementById("ArrivalBtn");
 //交換btn
 const roundTripBtn = document.getElementById("roundTripBtn");
 
 //各縣市車站data
 let stationData = [];
-const cityMap = {}; 
+const cityMap = {};
 
 //出發、抵達btn
 const row1Btns = document.querySelectorAll(".row1Btn");
@@ -34,6 +34,9 @@ const stationListEl = document.getElementById("stationList");
 const timeBtn = document.getElementById("timeBtn");
 const timeNowBtn = document.getElementById("timeNowBtn");
 
+//查詢按鈕
+const queryBtn = document.getElementById("queryBtn");
+
 //"對號"、"非對號"btn
 const vehicleTypeBtn = document.getElementById("vehicleTypeBtn");
 //"出發"、"抵達"btn
@@ -45,25 +48,25 @@ const directOrConvertToBtn = document.getElementById("directOrConvertToBtn");
 //------------------查詢全縣市車站------------------\\
 window.addEventListener("DOMContentLoaded", () => {
   loadStations();
-  fillNowTime();  // 預設載入現在時間
+  fillNowTime(); // 預設載入現在時間
 });
 
 function loadStations() {
   console.log("開始載入車站資料…");
 
   fetch(API_URL)
-    .then(response => {
+    .then((response) => {
       if (!response.ok) {
         throw new Error("HTTP error " + response.status);
       }
       return response.json();
     })
-    .then(data => {
-      stationData = data.data;   // <-- 儲存在全域變數
+    .then((data) => {
+      stationData = data.data; // <-- 儲存在全域變數
       console.log("資料載入成功，stationData =", stationData);
-      stationData.forEach(item => {
+      stationData.forEach((item) => {
         const city = item.cityName;
-      
+
         // 若這個 cityName 尚未被建立，先給它一個空陣列
         if (!cityMap[city]) {
           cityMap[city] = [];
@@ -72,26 +75,21 @@ function loadStations() {
         cityMap[city].push({
           stationName: item.stationName,
           stationId: item.stationId,
-          cityId: item.cityId
+          cityId: item.cityId,
         });
       });
-
     })
-    .catch(err => {
+    .catch((err) => {
       console.error("載入失敗：", err);
     });
 }
-
-
 
 //------------------查詢各縣市車站------------------\\
 // 記錄「目前是誰打開 popup」：出發站 or 到達站
 let currentTargetBtn = null;
 
-
 // 顯示彈出視窗
 function showTable() {
-
   let selectedCityId = null;
   if (currentTargetBtn.dataset && currentTargetBtn.dataset.cityId) {
     selectedCityId = parseInt(currentTargetBtn.dataset.cityId, 10);
@@ -102,19 +100,23 @@ function showTable() {
     selectedStationId = parseInt(currentTargetBtn.dataset.stationId, 10);
   }
 
-  console.log("selectedCityId =", selectedCityId, "selectedStationId =", selectedStationId);
+  console.log(
+    "selectedCityId =",
+    selectedCityId,
+    "selectedStationId =",
+    selectedStationId
+  );
 
   popup.classList.remove("hidden");
   renderCityList(selectedCityId, selectedStationId);
 }
 
-
 // ===== 畫左邊：縣市清單 =====
 // selectedCityId: 目前按鈕上的 cityId（用來標記選中縣市）
 // selectedStationId: 目前按鈕上的 stationId（之後傳給右邊用）
 function renderCityList(selectedCityId, selectedStationId) {
-  cityListEl.innerHTML = "";      // 清空舊資料
-  stationListEl.innerHTML = "";   // 清空右邊車站
+  cityListEl.innerHTML = ""; // 清空舊資料
+  stationListEl.innerHTML = ""; // 清空右邊車站
 
   const cityNames = Object.keys(cityMap); // 取得所有縣市名稱
 
@@ -134,7 +136,7 @@ function renderCityList(selectedCityId, selectedStationId) {
       // 先把其他縣市的 active 樣式移除
       document
         .querySelectorAll("#cityList .popup-item")
-        .forEach(el => el.classList.remove("active"));
+        .forEach((el) => el.classList.remove("active"));
 
       // 標記目前這個為選中
       btn.classList.add("active");
@@ -173,7 +175,6 @@ function renderCityList(selectedCityId, selectedStationId) {
   }
 }
 
-
 // ===== 畫右邊：某縣市的所有車站 =====
 // cityName: 左邊選中的縣市
 // selectedStationId: 要標記為選中的車站 ID（可能是出發或抵達按鈕上的）
@@ -182,7 +183,7 @@ function renderStations(cityName, selectedStationId) {
 
   const stations = cityMap[cityName] || [];
 
-  stations.forEach(st => {
+  stations.forEach((st) => {
     const btn = document.createElement("button");
     btn.className = "popup-item";
     btn.textContent = st.stationName;
@@ -190,7 +191,7 @@ function renderStations(cityName, selectedStationId) {
     // 如果有指定 selectedStationId，且 stationId 相同 → 標記為選中
     if (selectedStationId != null && st.stationId === selectedStationId) {
       btn.classList.add("active");
-      console.log("========================標記為選中:"+selectedStationId)
+      console.log("========================標記為選中:" + selectedStationId);
     }
 
     // 點某個車站 → 把站名 & id 帶回出發/到達按鈕 + 關閉 popup
@@ -214,7 +215,7 @@ function renderStations(cityName, selectedStationId) {
 }
 // ===== 綁定：點「出發站」按鈕時，打開 popup =====
 setOffBtn.addEventListener("click", () => {
-  currentTargetBtn = setOffBtn;  // 代表這次是要選「出發站」
+  currentTargetBtn = setOffBtn; // 代表這次是要選「出發站」
   console.log(" 代表這次是要選「出發站」");
   showTable();
 });
@@ -236,7 +237,6 @@ popup.addEventListener("click", (e) => {
     popup.classList.add("hidden");
   }
 });
-
 
 //------------------交換btn------------------\\
 roundTripBtn.addEventListener("click", () => {
@@ -260,15 +260,11 @@ roundTripBtn.addEventListener("click", () => {
   }
 });
 
-
-
 //------------------設定現在時間------------------\\
 
 timeNowBtn.addEventListener("click", fillNowTime);
 
-
 function fillNowTime() {
-
   // 取得現在時間
   const now = new Date();
 
@@ -277,24 +273,28 @@ function fillNowTime() {
 
   // 轉換成你要的格式：YYYY/MM/DD HH:mm
   const formattedTime =
-    now.getFullYear() + "/" +
-    pad(now.getMonth() + 1) + "/" +
-    pad(now.getDate()) + " " +
-    pad(now.getHours()) + " : " +
+    now.getFullYear() +
+    "/" +
+    pad(now.getMonth() + 1) +
+    "/" +
+    pad(now.getDate()) +
+    " " +
+    pad(now.getHours()) +
+    " : " +
     pad(now.getMinutes());
 
   // 將字串顯示在按鈕上
   timeBtn.textContent = formattedTime;
 
   // 若你需要之後給後端 → 存在 value 或 dataset 裡（任選）
-  timeBtn.dataset.datetime = formattedTime;        // 若你想用 dataset（推薦）
-};
+  timeBtn.dataset.datetime = formattedTime; // 若你想用 dataset（推薦）
+}
 
 //------------------設定"對號"or"非對號"車種------------------\\
 const vehicleOptions = [
   { text: "全部", value: 0 },
   { text: "對號", value: 1 },
-  { text: "非對號", value: 2 }
+  { text: "非對號", value: 2 },
 ];
 
 // 記錄目前索引（從 0 = 全部 開始）
@@ -323,7 +323,7 @@ vehicleTypeBtn.addEventListener("click", () => {
 //------------------設定"出發時間"or"抵達時間"------------------\\
 timeQueryBtn.addEventListener("click", () => {
   const current = timeQueryBtn.dataset.timeType;
-  
+
   if (current === "0") {
     // 切換成「抵達時間」
     timeQueryBtn.innerText = "抵達時間";
@@ -350,17 +350,168 @@ directOrConvertToBtn.addEventListener("click", () => {
   }
 });
 
-
 //------------------查詢火車班次------------------\\
-function test(){
+function test() {
   const setOffStationId = setOffBtn.dataset.stationId;
   const arrivalBtnStationId = arrivalBtn.dataset.stationId;
   console.log("------------------------");
-  console.log("setOffStationId:"+setOffStationId);
-  console.log("arrivalBtnStationId:"+arrivalBtnStationId);
+  console.log("setOffStationId:" + setOffStationId);
+  console.log("arrivalBtnStationId:" + arrivalBtnStationId);
+}
+
+//----------------------查詢豁車時刻表--------------------------------
+queryBtn.addEventListener("click", () => {
+  let stationStart = setOffBtn.dataset.stationId;
+  let stationEnd = arrivalBtn.dataset.stationId;
+
+  if (stationStart == stationEnd) {
+    window.alert("請選擇不同起點及終點站");
+    return;
+  }
+  // 送出查詢
+  queryTrain(stationStart, stationEnd);
+});
+
+function queryTrain(stationStart, stationEnd) {
+  // 方向：stationId 小到大 = 南下(1)，大到小 = 北上(0)
+  const direction = Number(stationStart) > Number(stationEnd) ? "0" : "1";
+
+  const reqVo = {
+    stationStart: stationStart,
+    stationEnd: stationEnd,
+    direction: direction,
+    timeType: timeQueryBtn.dataset.timeType,
+    vehicleType: vehicleTypeBtn.dataset.type,
+    // time: timeBtn.dataset.datetime,  // 之後時間格式確認再打開
+    routeType: directOrConvertToBtn.dataset.mode,
+  };
+
+  console.log("要傳給後端的 JSON:", reqVo);
+
+  fetch(API_URL_QUERY, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(reqVo),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("HTTP 狀態碼：" + response.status);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("後端回傳:", data);
+
+      // 如果你有 ApiResponse 包一層，這邊一起處理
+      // 例如：{ success: true, data: [ ... ] }
+      const trains = Array.isArray(data)
+        ? data
+        : Array.isArray(data.data)
+        ? data.data
+        : [];
+
+      if (!trains || trains.length === 0) {
+        window.alert("查無班次");
+        return;
+      }
+
+      // ✅ 打開彈跳視窗，顯示班次列表
+      openResultModal(trains);
+    })
+    .catch((err) => {
+      console.error("API 發生錯誤:", err);
+      window.alert("查詢發生錯誤，請稍後再試");
+    });
 }
 
 
+// 時間 "05:23:00" -> "05:23"
+function formatTime(t) {
+  if (!t) return "";
+  return t.slice(0, 5);
+}
 
+// 時間差 "01:02:00" -> "1時2分"
+function formatDuration(diff) {
+  if (!diff) return "";
+  const [h, m] = diff.split(":").map((v) => parseInt(v, 10));
+  let s = "";
+  if (h > 0) s += h + "時";
+  if (m > 0) s += m + "分";
+  return s || "0分";
+}
 
+// 產生一列班次 DOM
+function createTrainRow(item) {
+  const row = document.createElement("div");
+  row.className = "flex px-4 py-3 items-center justify-between";
 
+  row.innerHTML = `
+    <!-- 左邊：車種 + 車次 -->
+    <div class="w-16 text-center leading-tight">
+      <div class="text-xs font-bold text-rose-500">${item.typeName}</div>
+      <div class="text-xs text-rose-500">${item.trainNo}</div>
+    </div>
+
+    <!-- 中間：時間 + 所需時間 -->
+    <div class="flex-1 px-2">
+      <div class="flex items-baseline gap-2">
+        <div class="text-xl font-semibold">${formatTime(
+          item.arrivalTimeStart
+        )}</div>
+        <span class="text-gray-400 text-sm">→</span>
+        <div class="text-xl font-semibold">${formatTime(
+          item.arrivalTimeEnd
+        )}</div>
+      </div>
+      <div class="text-xs text-gray-500 mt-1">
+        ${formatDuration(item.timeDiff)}
+      </div>
+    </div>
+
+    <!-- 右邊：狀態 / 票價（你之後可改成真正價格） -->
+    <div class="text-right text-xs leading-tight">
+      <div class="text-gray-500">準點</div>
+      <!-- 目前先不顯示票價，之後有欄位再改 -->
+    </div>
+  `;
+
+  return row;
+}
+
+function openResultModal(trains) {
+  const modal = document.getElementById("resultModal");
+  const titleEl = document.getElementById("resultTitle");
+  const listEl = document.getElementById("resultList");
+
+  if (!Array.isArray(trains) || trains.length === 0) {
+    alert("查無班次");
+    return;
+  }
+
+  // 標題用第一筆的起訖站
+  const first = trains[0];
+  titleEl.textContent = `${first.stationNameStart} → ${first.stationNameEnd}`;
+
+  // 清空舊資料
+  listEl.innerHTML = "";
+
+  // 建立每一列班次
+  trains.forEach((item) => {
+    listEl.appendChild(createTrainRow(item));
+  });
+
+  // 顯示視窗
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+}
+
+// 點背景關閉（不需要 X）
+document.getElementById("resultModal").addEventListener("click", (e) => {
+  if (e.target.id === "resultModal") {
+    e.currentTarget.classList.add("hidden");
+    e.currentTarget.classList.remove("flex");
+  }
+});

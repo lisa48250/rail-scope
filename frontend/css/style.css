@@ -9,12 +9,12 @@
 .label-row {
   display: flex;
   align-items: center;
-  gap: 570px; /* 出發和抵達之間距離 */
+  gap: 680px; /* 出發和抵達之間距離 */
   font-size: 20px;
   color: rgb(80, 126, 220);
 }
 .label-right {
-  margin-left: 130px; /* 向右移動 100px */
+  margin-left: 150px; /* 向右移動 100px */
 }
 
 /* ----------------------------row1Btn----------------------------- */

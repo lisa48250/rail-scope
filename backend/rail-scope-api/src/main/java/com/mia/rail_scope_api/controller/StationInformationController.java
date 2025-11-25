@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mia.rail_scope_api.response.ApiResponse;
 import com.mia.rail_scope_api.responseVo.QueryStationRespVo;
 import com.mia.rail_scope_api.service.StationInformationService;
 
@@ -20,11 +21,12 @@ public class StationInformationController {
 
 	private final StationInformationService stationInformationService;
 	
+	
 	//查詢所有縣市車站
 	@GetMapping("/all")
-	public List<QueryStationRespVo> queryStationAll(){
-		return stationInformationService.queryStationAll();
+	public ApiResponse<?> queryStationAll(){
+		List<QueryStationRespVo> resultList =  stationInformationService.queryStationAll();
+		return ApiResponse.ok(resultList);
 	}
-	
 	
 }

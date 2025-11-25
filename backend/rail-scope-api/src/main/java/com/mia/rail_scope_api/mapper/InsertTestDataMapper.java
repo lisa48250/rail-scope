@@ -12,25 +12,26 @@ public interface InsertTestDataMapper {
 	//查詢最新車次
 	@Select("select top 1 t.trainNo  from train t  "
 			+ " where t.trainTypeId = #{trainTypeId} and t.direction = #{direction} "
-			+ " and exists (select * from trainStopTime tst where t.trainNo = tst.trainNo )")
+			+ " and exists (select * from trainStopTime tst where t.trainNo = tst.trainNo )"
+			+ " order by t.updatedAt desc")
 	String queryNewestTrainData(TrainModel model);
 	
 	//新增train測試資料
-	@Insert("insert into RailScope.dbo.train (trainNo, trainTypeId,direction,updatedAt) values  "
+	@Insert("insert into train (trainNo, trainTypeId,direction,updatedAt) values  "
 			+ "(#{trainNo},#{trainTypeId},#{direction},GETDATE())")
-	void insertTrainTestData(TrainModel model);
+	int insertTrainTestData(String trainNo,int trainTypeId,int direction);
 	
 	//新增trainStopTime測試資料
-	@Insert("INSERT INTO trainStopTime (trainNo, stationId, stopSequence, arrivalTime, departureTime,updatedAt) "
+	@Insert("INSERT INTO trainStopTime (trainNo, lineOrder, stopSequence, arrivalTime, departureTime,updatedAt) "
 			+ "select  "
 			+ "#{newTrainNo}  "
-			+ ",stationId  "
+			+ ",lineOrder  "
 			+ ",stopSequence  "
-			+ ",DATEADD(MINUTE, 35, arrivalTime) AS NEWarrivalTime "
-			+ ",DATEADD(MINUTE, 35, departureTime) AS NEWdepartureTime "
+			+ ",DATEADD(MINUTE, #{time}, arrivalTime) AS NEWarrivalTime "
+			+ ",DATEADD(MINUTE, #{time}, departureTime) AS NEWdepartureTime "
 			+ ",GETDATE() "
 			+ "from trainStopTime tst  "
 			+ "where trainNo = #{oldTrainNo} "
 			+ "order by stopSequence   ")
-	int insertTrainStopTimeTestData(String newTrainNo, String oldTrainNo);
+	int insertTrainStopTimeTestData(String newTrainNo, String oldTrainNo,int time);
 }

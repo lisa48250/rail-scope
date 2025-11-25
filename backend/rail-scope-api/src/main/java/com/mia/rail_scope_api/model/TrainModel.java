@@ -19,4 +19,5 @@ public class TrainModel {
 	
 	private LocalDateTime updatedAt;	//更新時間
 	
+	
 }
