@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://127.0.0.1:5500")   // 或開發階段先用 "*"
+@CrossOrigin(origins = "http://127.0.0.1:5501")   // 或開發階段先用 "*"
 @RequestMapping("/api/stationInformation")
 public class StationInformationController {
 
