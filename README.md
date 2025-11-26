@@ -73,7 +73,7 @@ Tools
 - VS Code
 
 ## 🚀 未來規劃（Future Improvements）
-- 串接 TDX 火車時刻表 API（實際資料來源）
+- 串接 TDC運輸資料流通 火車時刻表 API（實際資料來源）
 - 後端部署至 Railway + 前端 GitHub Pages 完整串接
 - 使用前端框架（React）優化 UI
 
