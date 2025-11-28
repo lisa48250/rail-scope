@@ -5,6 +5,9 @@
 - 進入頁面，選擇出發即抵達車站
 <img width="878" height="375" alt="螢幕擷取畫面 2025-11-26 193530" src="https://github.com/user-attachments/assets/d564eb62-a08b-4bc4-af27-b18d5ad0f013" />
 
+- 查詢各縣市車站
+<img width="857" height="376" alt="image" src="https://github.com/user-attachments/assets/2e008dd6-37be-4051-be78-37b7d5c76e31" />
+
 - 查詢火車班次
 <img width="853" height="413" alt="image" src="https://github.com/user-attachments/assets/5929c7be-38ef-434e-997e-d0cdf53e320d" />
 
