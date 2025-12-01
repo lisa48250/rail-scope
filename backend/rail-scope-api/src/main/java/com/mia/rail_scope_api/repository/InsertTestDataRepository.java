@@ -35,6 +35,7 @@ public class InsertTestDataRepository {
 	 * 新增車次資料
 	 */
 	public void insertTrainTestData(String trainNo,int trainTypeId,int direction) {
+		System.out.println("帶入變數值trainNo,trainTypeId, direction:"+ trainNo+","+trainTypeId+","+direction);
 		int result =  insertTestDataMapper.insertTrainTestData(trainNo,trainTypeId, direction);
 	    if (result == 0) {
 	        throw new IllegalStateException("未新增任何 train 資料");

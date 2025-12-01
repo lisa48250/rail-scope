@@ -21,7 +21,7 @@ public interface InsertTestDataMapper {
 			+ "(#{trainNo},#{trainTypeId},#{direction},GETDATE())")
 	int insertTrainTestData(String trainNo,int trainTypeId,int direction);
 	
-	//新增trainStopTime測試資料
+	//新增trainStopTime測試資料(一次新增多筆)
 	@Insert("INSERT INTO trainStopTime (trainNo, lineOrder, stopSequence, arrivalTime, departureTime,updatedAt) "
 			+ "select  "
 			+ "#{newTrainNo}  "
