@@ -31,7 +31,11 @@ const cityListEl = document.getElementById("cityList");
 const stationListEl = document.getElementById("stationList");
 
 //時間btn
+const dateBtn = document.getElementById("dateBtn");
+const datePicker = document.getElementById("datePicker");
+
 const timeBtn = document.getElementById("timeBtn");
+
 const timeNowBtn = document.getElementById("timeNowBtn");
 
 //查詢按鈕
@@ -260,8 +264,9 @@ roundTripBtn.addEventListener("click", () => {
   }
 });
 
-//------------------設定現在時間------------------\\
+//------------------處理時間------------------\\
 
+//設定現在時間
 timeNowBtn.addEventListener("click", fillNowTime);
 
 function fillNowTime() {
@@ -271,24 +276,56 @@ function fillNowTime() {
   // 補零函式，例如 9 → "09"
   const pad = (n) => n.toString().padStart(2, "0");
 
-  // 轉換成你要的格式：YYYY/MM/DD HH:mm
-  const formattedTime =
+  // 轉換格式：YYYY/MM/DD
+  const formattedDate =
     now.getFullYear() +
     "/" +
     pad(now.getMonth() + 1) +
     "/" +
-    pad(now.getDate()) +
-    " " +
-    pad(now.getHours()) +
-    " : " +
-    pad(now.getMinutes());
+    pad(now.getDate());
+
+  // 轉換格式：HH:mm
+  const formattedTime = pad(now.getHours()) + " : " + pad(now.getMinutes());
 
   // 將字串顯示在按鈕上
+  dateBtn.textContent = formattedDate;
   timeBtn.textContent = formattedTime;
 
   // 若你需要之後給後端 → 存在 value 或 dataset 裡（任選）
-  timeBtn.dataset.datetime = formattedTime; // 若你想用 dataset（推薦）
+  dateBtn.dataset.datetime = formattedDate;
+  timeBtn.dataset.datetime = formattedTime;
 }
+
+//=====設定點選日期btn=====
+document.addEventListener("DOMContentLoaded", function () {
+  if (!dateBtn || !datePicker) {
+    console.error("dateBtn 或 datePicker 找不到");
+    return;
+  }
+
+  const today = new Date();
+  const maxDate = new Date();
+  maxDate.setDate(today.getDate() + 30);
+
+  const fp = flatpickr("#datePicker", {
+    minDate: today,
+    maxDate: maxDate,
+    dateFormat: "Y/m/d",
+    clickOpens: false, // 不用點 input，自行 open()
+    position: "below right", // 往右下
+  });
+
+  // 點按鈕打開 datepicker
+  dateBtn.addEventListener("click", () => {
+    fp.open();
+  });
+
+  // 選完日期後把值顯示在按鈕上
+  datePicker.addEventListener("change", (e) => {
+    dateBtn.textContent = e.target.value; // ex: 2025/12/01
+    dateBtn.dataset.datetime = e.target.value; // ex: 2025/12/01
+  });
+});
 
 //------------------設定"對號"or"非對號"車種------------------\\
 const vehicleOptions = [
@@ -382,7 +419,8 @@ function queryTrain(stationStart, stationEnd) {
     direction: direction,
     timeType: timeQueryBtn.dataset.timeType,
     vehicleType: vehicleTypeBtn.dataset.type,
-    // time: timeBtn.dataset.datetime,  // 之後時間格式確認再打開
+    date: dateBtn.dataset.datetime,
+    time: timeBtn.dataset.datetime,
     routeType: directOrConvertToBtn.dataset.mode,
   };
 
@@ -425,7 +463,6 @@ function queryTrain(stationStart, stationEnd) {
       window.alert("查詢發生錯誤，請稍後再試");
     });
 }
-
 
 // 時間 "05:23:00" -> "05:23"
 function formatTime(t) {

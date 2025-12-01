@@ -74,70 +74,8 @@
     transform: scale(0.95);
   }
 
-/* ----------------------------row2-1Btn----------------------------- */
-.row2-1Btn {
-  /* btn大小 */
-  height: 50px;
-  width: 770px;
-
-  /* btn圓角 */
-  border-radius: 0.25rem; /* 4px */
-
-  /* bg-blue-600 */
-  background-color: #e4e4e4;
-
-  /* text-white */
-  color: rgb(86, 89, 95);
-
-  /* 字體大小 */
-  font-size: 25px;
-
-  /* 按鈕分開 */
-  margin-bottom: 10px;
-}
-
-.row2-1Btn:hover {
-  background-color: #c3c3c3;
-}
-/* active 效果（按下去縮小一點，更像 app button） */
-.row2-1Btn:active {
-    transform: scale(0.95);
-  }
-
-
-/* ----------------------------row2-2Btn----------------------------- */
-.row2-2Btn {
-  /* btn大小 */
-  height: 50px;
-  width: 280px;
-
-  /* btn圓角 */
-  border-radius: 0.25rem; /* 4px */
-
-  /* bg-blue-600 */
-  background-color: #e4e4e4;
-
-  /* text-white */
-  color: rgb(86, 89, 95);
-
-  /* 字體大小 */
-  font-size: 25px;
-
-  /* 按鈕分開 */
-  margin-bottom: 10px;
-}
-
-.row2-2Btn:hover {
-  background-color: #c3c3c3;
-}
-/* active 效果（按下去縮小一點，更像 app button） */
-.row2-2Btn:active {
-    transform: scale(0.95);
-  }
-
-
-/* ----------------------------row3Btn----------------------------- */
-.row3Btn {
+/* ----------------------------row2AndRow3Btn----------------------------- */
+.row2AndRow3Btn {
   /* btn大小 */
   height: 50px;
   width: 343px;
@@ -160,11 +98,11 @@
 }
 
 /* 滑鼠移上去時才變色 */
-.row3Btn:hover {
+.row2AndRow3Btn:hover {
   background-color: #c3c3c3;
 }
 /* active 效果（按下去縮小一點，更像 app button） */
-.row3Btn:active {
+.row2AndRow3Btn:active {
     transform: scale(0.95);
   }
 
@@ -292,4 +230,13 @@
 .popup-item.active {
   background-color: #2563eb;
   color: white;
+}
+
+/* --------------------------------------date---------------------------------------------- */
+.hidden-date-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  height: 0;
+  width: 0;
 }

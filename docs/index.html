@@ -18,6 +18,12 @@
       rel="stylesheet"
     />
 
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <style>
       body {
         font-family: "Noto Sans TC", sans-serif;
@@ -94,17 +100,25 @@
           </div>
         </div>
 
-        <button id="timeBtn" class="row2-1Btn"></button>
+        <button id="dateBtn" class="row2AndRow3Btn">2025</button>
+        <!-- 隱藏的日期選擇器：不要用 display:none -->
+        <input type="text" id="datePicker" class="hidden-date-input" />
 
-        <button id="timeNowBtn" class="row2-2Btn ml-4">現在</button>
+        <button id="timeBtn" class="row2AndRow3Btn ml-4">10:00</button>
 
-        <button id="timeQueryBtn" class="row3Btn" data-time-type="0">
+        <button id="timeNowBtn" class="row2AndRow3Btn ml-4">現在</button>
+
+        <button id="timeQueryBtn" class="row2AndRow3Btn" data-time-type="0">
           出發時間
         </button>
 
-        <button id="vehicleTypeBtn" class="row3Btn ml-4">全部</button>
+        <button id="vehicleTypeBtn" class="row2AndRow3Btn ml-4">全部</button>
 
-        <button id="directOrConvertToBtn" class="row3Btn ml-4" data-mode="0">
+        <button
+          id="directOrConvertToBtn"
+          class="row2AndRow3Btn ml-4"
+          data-mode="0"
+        >
           直達
         </button>
 
