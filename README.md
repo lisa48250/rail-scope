@@ -3,13 +3,26 @@
 >RailScope 是一個 Spring Boot + MyBatis + SQL Server 建置的火車班次查詢系統。
 >前端使用 原生 JavaScript + dataset 狀態管理 完成站點選擇、條件查詢與彈跳視窗顯示班次結果。  
 - 進入頁面，選擇出發即抵達車站
-<img width="878" height="375" alt="螢幕擷取畫面 2025-11-26 193530" src="https://github.com/user-attachments/assets/d564eb62-a08b-4bc4-af27-b18d5ad0f013" />
+<img width="869" height="368" alt="image" src="https://github.com/user-attachments/assets/711b695b-6141-4218-8788-facbd4222960" />
 
 - 查詢各縣市車站
-<img width="857" height="376" alt="image" src="https://github.com/user-attachments/assets/2e008dd6-37be-4051-be78-37b7d5c76e31" />
+<img width="865" height="395" alt="image" src="https://github.com/user-attachments/assets/92f71b14-95fe-4877-ae9d-65abece3aa20" />
+
+
+- 查詢日期
+<img width="867" height="425" alt="image" src="https://github.com/user-attachments/assets/eb85036e-ec2a-4f3a-9cef-6665717da425" />
+
+
+- 查詢時間
+<img width="859" height="362" alt="image" src="https://github.com/user-attachments/assets/a65cdc54-e87b-444f-9520-c9b61e4216f9" />
+
 
 - 查詢火車班次
-<img width="853" height="413" alt="image" src="https://github.com/user-attachments/assets/5929c7be-38ef-434e-997e-d0cdf53e320d" />
+<img width="838" height="410" alt="image" src="https://github.com/user-attachments/assets/505194f5-9212-4504-9b66-1b940f69ce3b" />
+
+
+- 已過班次顯示不同狀態
+<img width="860" height="412" alt="image" src="https://github.com/user-attachments/assets/599b9616-4cf9-408a-adee-dfc8a45a8d69" />
 
 
 ## 📌 專案功能
@@ -17,7 +30,7 @@
 - 各縣市對應車站查詢
 - 起點與終點站選擇（Popup 彈出視窗）
 - 自動判斷方向（北上 = 0 / 南下 = 1）
-- 火車班次查詢
+- 火車班次時間查詢
 
 🔧 開發中
 - 增加查詢條件-直達 / 轉乘
