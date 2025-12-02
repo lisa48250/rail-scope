@@ -35,7 +35,10 @@ const dateBtn = document.getElementById("dateBtn");
 const datePicker = document.getElementById("datePicker");
 
 const timeBtn = document.getElementById("timeBtn");
-
+const pickerOverlay = document.getElementById("customTimePicker");
+const confirmBtn = document.getElementById("tpConfirmBtn");
+const hourWheel = document.getElementById("tpHourWheel");
+const minuteWheel = document.getElementById("tpMinuteWheel");
 const timeNowBtn = document.getElementById("timeNowBtn");
 
 //查詢按鈕
@@ -195,7 +198,6 @@ function renderStations(cityName, selectedStationId) {
     // 如果有指定 selectedStationId，且 stationId 相同 → 標記為選中
     if (selectedStationId != null && st.stationId === selectedStationId) {
       btn.classList.add("active");
-      console.log("========================標記為選中:" + selectedStationId);
     }
 
     // 點某個車站 → 把站名 & id 帶回出發/到達按鈕 + 關閉 popup
@@ -206,10 +208,6 @@ function renderStations(cityName, selectedStationId) {
         // 更新按鈕身上的 cityId & stationId
         currentTargetBtn.dataset.cityId = st.cityId;
         currentTargetBtn.dataset.stationId = st.stationId;
-
-        console.log("選擇站名:", st.stationName);
-        console.log("選擇站ID:", st.stationId);
-        console.log("選擇縣市ID:", st.cityId);
       }
       popup.classList.add("hidden"); // 關閉 popup
     });
@@ -264,7 +262,7 @@ roundTripBtn.addEventListener("click", () => {
   }
 });
 
-//------------------處理時間------------------\\
+//--------------------------------處理時間--------------------------------\\
 
 //設定現在時間
 timeNowBtn.addEventListener("click", fillNowTime);
@@ -325,6 +323,121 @@ document.addEventListener("DOMContentLoaded", function () {
     dateBtn.textContent = e.target.value; // ex: 2025/12/01
     dateBtn.dataset.datetime = e.target.value; // ex: 2025/12/01
   });
+});
+
+///=====設定點選時間btn=====
+document.addEventListener("DOMContentLoaded", () => {
+
+  // 配置
+  const itemHeight = 40; // 每個選項的高度 (需配合 CSS)
+
+  // 1. 初始化產生選項函數
+  function initWheel(container, start, end) {
+    // 清空除了 padding 以外的內容
+    const paddings = container.querySelectorAll(".tp-padding");
+    container.innerHTML = "";
+    container.appendChild(paddings[0]); // 加回頂部 padding
+
+    for (let i = start; i <= end; i++) {
+      const div = document.createElement("div");
+      div.className = "tp-item";
+      div.textContent = i.toString().padStart(2, "0"); // 補零: 9 -> 09
+      div.dataset.value = div.textContent;
+
+      // 點擊該數字直接滾動到該位置
+      div.addEventListener("click", (e) => {
+        scrollToValue(container, e.target.dataset.value);
+      });
+
+      container.appendChild(div);
+    }
+
+    container.appendChild(paddings[1] || paddings[0].cloneNode(true)); // 加回底部 padding
+  }
+
+  // 2. 滾動到指定值的函數
+  function scrollToValue(container, value) {
+    const items = Array.from(container.querySelectorAll(".tp-item"));
+    const targetIndex = items.findIndex((item) => item.dataset.value === value);
+    if (targetIndex !== -1) {
+      container.scrollTo({
+        top: targetIndex * itemHeight,
+        behavior: "smooth",
+      });
+    }
+  }
+
+  // 3. 獲取目前選中的值 (根據滾動高度計算)
+  function getSelectedValue(container) {
+    const scrollTop = container.scrollTop;
+    const index = Math.round(scrollTop / itemHeight);
+    const items = container.querySelectorAll(".tp-item");
+    // 防止滑動過快超出範圍
+    const safeIndex = Math.min(Math.max(index, 0), items.length - 1);
+    return items[safeIndex].dataset.value;
+  }
+
+  // --- 初始化 ---
+  initWheel(hourWheel, 0, 23); // 24小時
+  initWheel(minuteWheel, 0, 59); // 60分
+
+  // 4. 開啟選擇器事件
+  timeBtn.addEventListener("click", (e) => {
+    e.preventDefault(); // 防止 submit
+    pickerOverlay.style.display = "flex";
+
+    // 讀取目前按鈕上的值，如果有的話，滾動到該位置
+    // 預設格式 HH:mm
+    let currentVal = timeBtn.dataset.datetime;
+    if (!currentVal) {
+      const now = new Date();
+      const h = now.getHours().toString().padStart(2, "0");
+      const m = now.getMinutes().toString().padStart(2, "0");
+      currentVal = `${h}:${m}`;
+    }
+
+    const [h, m] = currentVal.split(":");
+    // setTimeout 確保 display:flex 後才滾動，否則 scrollTop 無效
+    setTimeout(() => {
+      scrollToValue(hourWheel, h);
+      scrollToValue(minuteWheel, m);
+    }, 10);
+  });
+
+  // 5. 點擊遮罩關閉 (可選)
+  pickerOverlay.addEventListener("click", (e) => {
+    if (e.target === pickerOverlay) {
+      pickerOverlay.style.display = "none";
+    }
+  });
+
+  // 6. 確認按鈕事件 (核心需求)
+  confirmBtn.addEventListener("click", () => {
+    const selectedHour = getSelectedValue(hourWheel);
+    const selectedMinute = getSelectedValue(minuteWheel);
+
+    const finalTime = `${selectedHour}:${selectedMinute}`;
+
+    // 1. 顯示在 timeBtn 的 text 中
+    timeBtn.innerText = finalTime;
+
+    // 2. 值放入 timeBtn.dataset.datetime 中
+    timeBtn.dataset.datetime = finalTime;
+
+    // 關閉視窗
+    pickerOverlay.style.display = "none";
+
+    console.log(
+      `已設定時間: ${finalTime}, Dataset: ${timeBtn.dataset.datetime}`
+    );
+  });
+
+  // 視覺優化：當滾動停止時，自動高亮文字顏色 (這裡用简单的 css hover/active 模擬，若要精準變白字需配合 IntersectionObserver，為保持代碼輕量，此處主要依賴中間綠色條覆蓋)
+  // 由於綠色條在中間，文字在上面，白色的字體效果可以透過 mix-blend-mode 或是讓綠色條透明度調整來達成。
+  // 在此範例中，文字維持灰色，綠色條在下層，看起來就像圖片中的樣子。
+
+  // 如果想要完全模仿圖中「選中字體變白」，可以在 scroll 事件中動態加入 active class，
+  // 但考慮到效能與簡潔，目前的半透明綠色條效果已經非常接近。
 });
 
 //------------------設定"對號"or"非對號"車種------------------\\
@@ -419,8 +532,8 @@ function queryTrain(stationStart, stationEnd) {
     direction: direction,
     timeType: timeQueryBtn.dataset.timeType,
     vehicleType: vehicleTypeBtn.dataset.type,
-    date: dateBtn.dataset.datetime,
-    time: timeBtn.dataset.datetime,
+    // date: dateBtn.dataset.datetime,
+    // time: timeBtn.dataset.datetime,
     routeType: directOrConvertToBtn.dataset.mode,
   };
 

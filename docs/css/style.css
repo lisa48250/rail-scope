@@ -232,7 +232,7 @@
   color: white;
 }
 
-/* --------------------------------------date---------------------------------------------- */
+/* --------------------------------------日期時間相關---------------------------------------------- */
 .hidden-date-input {
   position: absolute;
   opacity: 0;
@@ -240,3 +240,111 @@
   height: 0;
   width: 0;
 }
+
+/* 遮罩層 */
+.time-picker-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: none; /* 預設隱藏 */
+    justify-content: center;
+    align-items: center; /* 讓選擇器居中顯示 */
+}
+
+/* 選擇器本體 */
+.time-picker-container {
+    width: 300px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+/* 標題區 */
+.tp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+.tp-title {
+    font-size: 16px;
+    color: #333;
+}
+.tp-confirm {
+    border: none;
+    background: transparent;
+    color: #00bfa5; /* 圖片中的綠色 */
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* 滾輪區域主體 */
+.tp-body {
+    position: relative;
+    height: 200px; /* 顯示 5 行高度 (40px * 5) */
+    display: flex;
+    justify-content: center;
+    background: #fff;
+}
+
+/* 綠色高亮選取條 (絕對定位) */
+.tp-highlight-bar {
+    position: absolute;
+    top: 80px; /* (200px/2) - (40px/2) 置中 */
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: #00bfa5; /* 圖片中的綠色背景 */
+    pointer-events: none; /* 讓點擊穿透，才能滑動 */
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.9;
+}
+
+.tp-colon {
+    color: #fff;
+    font-weight: bold;
+    font-size: 18px;
+    z-index: 2;
+}
+
+/* 滾動容器 */
+.tp-wheel {
+    flex: 1;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory; /* 關鍵：強制吸附 */
+    height: 100%;
+    z-index: 2; /* 在綠色條之上 */
+    scrollbar-width: none; /* Firefox 隱藏捲軸 */
+    -ms-overflow-style: none;  /* IE 隱藏捲軸 */
+    text-align: center;
+}
+.tp-wheel::-webkit-scrollbar { 
+    display: none; /* Chrome 隱藏捲軸 */
+}
+
+/* 選項樣式 */
+.tp-item {
+    height: 40px;
+    line-height: 40px;
+    font-size: 16px;
+    color: #888;
+    scroll-snap-align: center; /* 關鍵：每次停在正中間 */
+    transition: color 0.2s;
+    cursor: pointer;
+}
+
+/* 為了讓第一個和最後一個能滾到中間，需要墊高 */
+.tp-padding {
+    height: 80px; /* 兩格的高度 */
+}
+
+/* 當選項在綠色區域時的顏色 (需要配合 JS 動態判斷，或利用混合模式偷吃步) */
+/* 這裡簡單處理：字體在上面顯示 */
