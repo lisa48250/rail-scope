@@ -523,8 +523,9 @@ queryBtn.addEventListener("click", () => {
 });
 
 function queryTrain(stationStart, stationEnd) {
-  // 方向：stationId 小到大 = 南下(1)，大到小 = 北上(0)
   const direction = Number(stationStart) > Number(stationEnd) ? "0" : "1";
+
+  const queryTime = timeBtn.dataset.datetime || null; // 例如 "09:00"
 
   const reqVo = {
     stationStart: stationStart,
@@ -533,7 +534,7 @@ function queryTrain(stationStart, stationEnd) {
     timeType: timeQueryBtn.dataset.timeType,
     vehicleType: vehicleTypeBtn.dataset.type,
     // date: dateBtn.dataset.datetime,
-    // time: timeBtn.dataset.datetime,
+    // time: queryTime,
     routeType: directOrConvertToBtn.dataset.mode,
   };
 
@@ -555,8 +556,6 @@ function queryTrain(stationStart, stationEnd) {
     .then((data) => {
       console.log("後端回傳:", data);
 
-      // 如果你有 ApiResponse 包一層，這邊一起處理
-      // 例如：{ success: true, data: [ ... ] }
       const trains = Array.isArray(data)
         ? data
         : Array.isArray(data.data)
@@ -568,14 +567,15 @@ function queryTrain(stationStart, stationEnd) {
         return;
       }
 
-      // ✅ 打開彈跳視窗，顯示班次列表
-      openResultModal(trains);
+      // 把查詢時間一起丟給 modal
+      openResultModal(trains, queryTime);
     })
     .catch((err) => {
       console.error("API 發生錯誤:", err);
       window.alert("查詢發生錯誤，請稍後再試");
     });
 }
+
 
 // 時間 "05:23:00" -> "05:23"
 function formatTime(t) {
@@ -593,45 +593,68 @@ function formatDuration(diff) {
   return s || "0分";
 }
 
+// "HH:mm" 或 "HH:mm:ss" -> 轉成從 0:00 起算的總分鐘數
+function timeToMinutes(t) {
+  if (!t) return null;
+  const parts = t.split(":").map((v) => parseInt(v, 10));
+  const h = parts[0] || 0;
+  const m = parts[1] || 0;
+  return h * 60 + m;
+}
+
 // 產生一列班次 DOM
-function createTrainRow(item) {
+// 產生一列班次 DOM，第二個參數 isPast 控制是否為已過班次
+function createTrainRow(item, isPast) {
   const row = document.createElement("div");
   row.className = "flex px-4 py-3 items-center justify-between";
+
+  if (isPast) {
+    row.classList.add("bg-gray-100", "text-gray-400");
+  }
+
+  // 車種顏色設定
+  const yellowTypes = ["區間車", "區間快"];
+  const isYellow = yellowTypes.includes(item.typeName);
+
+  const typeColor = isYellow ? "text-blue-400" : "text-blue-700";
+  const trainNoColor = isYellow ? "text-blue-400" : "text-blue-700";
+
+  const statusHTML = isPast
+    ? `<div class="text-red-500">已過站</div>`
+    : `<div class="text-gray-500">準點</div>`;
 
   row.innerHTML = `
     <!-- 左邊：車種 + 車次 -->
     <div class="w-16 text-center leading-tight">
-      <div class="text-xs font-bold text-rose-500">${item.typeName}</div>
-      <div class="text-xs text-rose-500">${item.trainNo}</div>
+      <div class="text-xs font-bold ${typeColor}">${item.typeName}</div>
+      <div class="text-xs ${trainNoColor}">${item.trainNo}</div>
     </div>
 
     <!-- 中間：時間 + 所需時間 -->
     <div class="flex-1 px-2">
       <div class="flex items-baseline gap-2">
-        <div class="text-xl font-semibold">${formatTime(
-          item.arrivalTimeStart
-        )}</div>
+        <div class="text-xl font-semibold">${formatTime(item.arrivalTimeStart)}</div>
         <span class="text-gray-400 text-sm">→</span>
-        <div class="text-xl font-semibold">${formatTime(
-          item.arrivalTimeEnd
-        )}</div>
+        <div class="text-xl font-semibold">${formatTime(item.arrivalTimeEnd)}</div>
       </div>
       <div class="text-xs text-gray-500 mt-1">
         ${formatDuration(item.timeDiff)}
       </div>
     </div>
 
-    <!-- 右邊：狀態 / 票價（你之後可改成真正價格） -->
+    <!-- 右邊：狀態 -->
     <div class="text-right text-xs leading-tight">
-      <div class="text-gray-500">準點</div>
-      <!-- 目前先不顯示票價，之後有欄位再改 -->
+      ${statusHTML}
     </div>
   `;
 
   return row;
 }
 
-function openResultModal(trains) {
+
+
+
+function openResultModal(trains, queryTimeStr) {
   const modal = document.getElementById("resultModal");
   const titleEl = document.getElementById("resultTitle");
   const listEl = document.getElementById("resultList");
@@ -641,22 +664,51 @@ function openResultModal(trains) {
     return;
   }
 
-  // 標題用第一筆的起訖站
   const first = trains[0];
   titleEl.textContent = `${first.stationNameStart} → ${first.stationNameEnd}`;
 
-  // 清空舊資料
   listEl.innerHTML = "";
 
-  // 建立每一列班次
+  // 查詢時間轉成分鐘，例如 "09:00" -> 540
+  const queryMinutes =
+    queryTimeStr && queryTimeStr.length >= 4
+      ? timeToMinutes(queryTimeStr)
+      : null;
+
+  let firstFutureRow = null; // 第一個「尚未到站」的 row DOM
+
   trains.forEach((item) => {
-    listEl.appendChild(createTrainRow(item));
+    // 這裡用出發站時間作比較
+    const departStr = formatTime(item.arrivalTimeStart); // "HH:mm"
+    const departMinutes = timeToMinutes(departStr);
+
+    const isPast =
+      queryMinutes != null && departMinutes != null && departMinutes < queryMinutes;
+
+    const row = createTrainRow(item, isPast);
+    listEl.appendChild(row);
+
+    // 記錄第一個「未過」班次
+    if (!isPast && !firstFutureRow) {
+      firstFutureRow = row;
+    }
   });
 
   // 顯示視窗
   modal.classList.remove("hidden");
   modal.classList.add("flex");
+
+  // 自動捲到「第一個未過班次」
+  // 若全部都已經過了，就不捲（保持在列表最上方）
+  if (firstFutureRow) {
+    // 確保 resultList 本身是 scroll 容器：例如有 max-h + overflow-y-auto
+    firstFutureRow.scrollIntoView({
+      block: "start",
+      behavior: "auto",
+    });
+  }
 }
+
 
 // 點背景關閉（不需要 X）
 document.getElementById("resultModal").addEventListener("click", (e) => {
