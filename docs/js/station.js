@@ -533,8 +533,7 @@ function queryTrain(stationStart, stationEnd) {
     direction: direction,
     timeType: timeQueryBtn.dataset.timeType,
     vehicleType: vehicleTypeBtn.dataset.type,
-    // date: dateBtn.dataset.datetime,
-    // time: queryTime,
+    date: dateBtn.dataset.datetime,
     routeType: directOrConvertToBtn.dataset.mode,
   };
 

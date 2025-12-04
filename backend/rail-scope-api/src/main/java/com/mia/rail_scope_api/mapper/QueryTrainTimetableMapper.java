@@ -38,9 +38,11 @@ public interface QueryTrainTimetableMapper {
 			+ "join station s2 on tst2.lineOrder = s2.lineOrder "
 			+ "join train t on tst.trainNo = t.trainNo "
 			+ "join trainType tt on t.trainTypeId = tt.trainTypeId  "
+			+ "join trainRun tr on tr.trainNo = t.trainNo "
 			+ "where  t.direction = #{direction} "
 			+ "and tst.lineOrder = #{stationStart} "
 			+ "and tst2.lineOrder = #{stationEnd} "
+			+ "and tr.serviceDate = #{date} "
 			+ "order by tst.arrivalTime asc")
 	List<QueryTrainTimetableRespVo> queryTrainTimetable (QueryTrainTimetableReqVo reqVo);
 

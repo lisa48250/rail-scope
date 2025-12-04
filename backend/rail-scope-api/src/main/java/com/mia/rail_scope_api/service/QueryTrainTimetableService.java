@@ -50,10 +50,10 @@ public class QueryTrainTimetableService {
 //			log.warn("直達或轉乘，不可為空");
 //			throw new IllegalArgumentException("直達或轉乘，不可為空");
 //		}
-//		if(reqVo.getTime() == null) {
-//			log.warn("時間不可為空");
-//			throw new NullPointerException("時間不可為空");
-//		}
+		if(reqVo.getDate() == null) {
+			log.warn("日期不可為空");
+			throw new NullPointerException("日期不可為空");
+		}
 		
 		//查詢火車時刻表
 		resultList = queryTrainTimetableRrepository.queryTrainTimetable(reqVo);
