@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Repository
 @Slf4j
-public class QueryTrainTimetableRrepository {
+public class QueryTrainTimetableRepository {
 
 	private final QueryTrainTimetableMapper queryTrainTimetableMapper;
 	
