@@ -42,10 +42,10 @@ public class QueryTrainTimetableService {
 //			log.warn("出發時間或抵達時間，不可為空");
 //			throw new IllegalArgumentException("出發時間或抵達時間，不可為空");
 //		}
-//		if(StringUtils.isBlank(reqVo.getVehicleType())) {
-//			log.warn("車輛類型，不可為空");
-//			throw new IllegalArgumentException("車輛類型，不可為空");
-//		}
+		if(StringUtils.isBlank(reqVo.getVehicleType())) {
+			log.warn("車輛類型，不可為空");
+			throw new IllegalArgumentException("車輛類型，不可為空");
+		}
 //		if(StringUtils.isBlank(reqVo.getRouteType())) {
 //			log.warn("直達或轉乘，不可為空");
 //			throw new IllegalArgumentException("直達或轉乘，不可為空");
@@ -55,6 +55,7 @@ public class QueryTrainTimetableService {
 			throw new NullPointerException("日期不可為空");
 		}
 		
+		log.info("reqVo.getVehicleType(): "+reqVo.getVehicleType());
 		//查詢火車時刻表
 		resultList = queryTrainTimetableRrepository.queryTrainTimetable(reqVo);
 		

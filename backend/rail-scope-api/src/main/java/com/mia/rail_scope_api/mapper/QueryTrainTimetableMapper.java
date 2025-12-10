@@ -3,6 +3,7 @@ package com.mia.rail_scope_api.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import com.mia.rail_scope_api.requestVo.QueryTrainTimetableReqVo;
@@ -21,7 +22,8 @@ public interface QueryTrainTimetableMapper {
 	 * @param tst2.stationId : 終點車站
 	 * @return
 	 */
-	@Select("select  "
+	@Select("<script>"
+			+ "select  "
 			+ "tst.trainNo as trainNo "
 			+ ",tt.typeName as typeName "
 			+ ",s1.stationName as stationNameStart "
@@ -43,7 +45,14 @@ public interface QueryTrainTimetableMapper {
 			+ "and tst.lineOrder = #{stationStart} "
 			+ "and tst2.lineOrder = #{stationEnd} "
 			+ "and tr.serviceDate = #{date} "
-			+ "order by tst.arrivalTime asc")
+			+ "<if test=\" vehicleType != null and vehicleType == '1'.toString() \"> "
+			+ " and tt.trainTypeId not in(5,6) "
+			+ "</if>"
+			+ "<if test=\" vehicleType != null and vehicleType == '2'.toString() \"> "
+			+ " and tt.trainTypeId in(5,6) "
+			+ "</if>"
+			+ "order by tst.arrivalTime asc"
+			+  "</script>")
 	List<QueryTrainTimetableRespVo> queryTrainTimetable (QueryTrainTimetableReqVo reqVo);
 
 }

@@ -34,6 +34,7 @@ class QueryTrainTimetableServiceTest {
         req.setStationEnd("19");
         req.setDirection("1");
         req.setDate(LocalDate.now());
+        req.setVehicleType("0");
         // 回傳資料設定
         QueryTrainTimetableRespVo vo = new QueryTrainTimetableRespVo();
         vo.setTrainNo("1234");
