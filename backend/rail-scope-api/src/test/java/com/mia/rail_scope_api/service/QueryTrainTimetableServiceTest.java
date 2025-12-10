@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.mia.rail_scope_api.repository.QueryTrainTimetableRrepository;
+import com.mia.rail_scope_api.repository.QueryTrainTimetableRepository;
 import com.mia.rail_scope_api.requestVo.QueryTrainTimetableReqVo;
 import com.mia.rail_scope_api.responseVo.QueryTrainTimetableRespVo;
 
@@ -20,7 +21,7 @@ import com.mia.rail_scope_api.responseVo.QueryTrainTimetableRespVo;
 class QueryTrainTimetableServiceTest {
 
     @Mock
-    private QueryTrainTimetableRrepository repository;
+    private QueryTrainTimetableRepository repository;
 
     @InjectMocks
     private QueryTrainTimetableService service;
@@ -32,6 +33,7 @@ class QueryTrainTimetableServiceTest {
         req.setStationStart("9");
         req.setStationEnd("19");
         req.setDirection("1");
+        req.setDate(LocalDate.now());
         // 回傳資料設定
         QueryTrainTimetableRespVo vo = new QueryTrainTimetableRespVo();
         vo.setTrainNo("1234");

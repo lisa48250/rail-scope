@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.mia.rail_scope_api.repository.QueryTrainTimetableRrepository;
+import com.mia.rail_scope_api.repository.QueryTrainTimetableRepository;
 import com.mia.rail_scope_api.requestVo.QueryTrainTimetableReqVo;
 import com.mia.rail_scope_api.responseVo.QueryTrainTimetableRespVo;
 
@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class QueryTrainTimetableService {
 
 	
-	private final QueryTrainTimetableRrepository queryTrainTimetableRrepository;
+	private final QueryTrainTimetableRepository queryTrainTimetableRrepository;
 	
 	public List<QueryTrainTimetableRespVo> queryTrainTimetable(QueryTrainTimetableReqVo reqVo){
 		List<QueryTrainTimetableRespVo> resultList = new ArrayList<>();
