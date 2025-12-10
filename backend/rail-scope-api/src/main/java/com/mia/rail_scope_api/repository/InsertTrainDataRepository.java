@@ -2,16 +2,16 @@ package com.mia.rail_scope_api.repository;
 
 import org.springframework.stereotype.Repository;
 
-import com.mia.rail_scope_api.mapper.InsertTestDataMapper;
+import com.mia.rail_scope_api.mapper.InsertTrainDataMapper;
 import com.mia.rail_scope_api.model.TrainModel;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Repository
-public class InsertTestDataRepository {
+public class InsertTrainDataRepository {
 
-	private final InsertTestDataMapper insertTestDataMapper;
+	private final InsertTrainDataMapper insertTrainDataMapper;
 	
 	/**
 	 * 查詢最新車次，取得最新的車次號碼
@@ -23,7 +23,7 @@ public class InsertTestDataRepository {
 	 */
 	public String queryNewestTrainData(TrainModel model) {
 		
-		String result = insertTestDataMapper.queryNewestTrainData(model);
+		String result = insertTrainDataMapper.queryNewestTrainData(model);
 		
 		if(result == null) {
 			throw new IllegalStateException("查無此火車班次");
@@ -36,7 +36,7 @@ public class InsertTestDataRepository {
 	 */
 	public void insertTrainTestData(String trainNo,int trainTypeId,int direction) {
 		System.out.println("帶入變數值trainNo,trainTypeId, direction:"+ trainNo+","+trainTypeId+","+direction);
-		int result =  insertTestDataMapper.insertTrainTestData(trainNo,trainTypeId, direction);
+		int result =  insertTrainDataMapper.insertTrainTestData(trainNo,trainTypeId, direction);
 	    if (result == 0) {
 	        throw new IllegalStateException("未新增任何 train 資料");
 	    }
@@ -46,7 +46,7 @@ public class InsertTestDataRepository {
 	 * 新增車次行駛資料
 	 */
 	public int insertTrainStopTimeTestData(String newTrainNo, String oldTrainNo, int time) {
-		int result = insertTestDataMapper.insertTrainStopTimeTestData(newTrainNo,oldTrainNo,time);
+		int result = insertTrainDataMapper.insertTrainStopTimeTestData(newTrainNo,oldTrainNo,time);
 	    if (result == 0) {
 	        throw new IllegalStateException("未新增任何 trainStopTime 資料");
 	    }

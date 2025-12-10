@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mia.rail_scope_api.model.TrainModel;
-import com.mia.rail_scope_api.repository.InsertTestDataRepository;
+import com.mia.rail_scope_api.repository.InsertTrainDataRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class insertTestDataService {
+public class InsertTrainDataService {
 
-	private final InsertTestDataRepository insertTestDataRepository;
+	private final InsertTrainDataRepository insertTrainDataRepository;
 
 	//-----------------------------新增相關-----------------------------------------
 	/**
@@ -102,7 +102,7 @@ public class insertTestDataService {
 
 	// 取得最新的車次號碼
 	public String getNewestTrainNo(TrainModel model) {
-		return insertTestDataRepository.queryNewestTrainData(model);
+		return insertTrainDataRepository.queryNewestTrainData(model);
 	}
 
 	// 新增train、trainStopTime
@@ -129,11 +129,11 @@ public class insertTestDataService {
 
 		// 3.新增train
 		log.info("開始新增train測試資料: ", newTrainNo, model.getTrainTypeId(), model.getDirection());
-		insertTestDataRepository.insertTrainTestData(newTrainNo, model.getTrainTypeId(), model.getDirection());
+		insertTrainDataRepository.insertTrainTestData(newTrainNo, model.getTrainTypeId(), model.getDirection());
 
 		// 4.新增trainStopTime
 		log.info("開始新增trainStopTime測試資料: ", newTrainNo, trainNo, time);
-		result = insertTestDataRepository.insertTrainStopTimeTestData(newTrainNo, trainNo, time);
+		result = insertTrainDataRepository.insertTrainStopTimeTestData(newTrainNo, trainNo, time);
 		log.info("新增完成: {} 筆", result);
 
 		return result;

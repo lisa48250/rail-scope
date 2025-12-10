@@ -6,8 +6,9 @@ import org.apache.ibatis.annotations.Select;
 
 import com.mia.rail_scope_api.model.TrainModel;
 
+
 @Mapper
-public interface InsertTestDataMapper {
+public interface InsertTrainDataMapper {
 	
 	//查詢最新車次
 	@Select("select top 1 t.trainNo  from train t  "
