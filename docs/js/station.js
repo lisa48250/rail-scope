@@ -327,7 +327,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 ///=====設定點選時間btn=====
 document.addEventListener("DOMContentLoaded", () => {
-
   // 配置
   const itemHeight = 40; // 每個選項的高度 (需配合 CSS)
 
@@ -575,7 +574,6 @@ function queryTrain(stationStart, stationEnd) {
     });
 }
 
-
 // 時間 "05:23:00" -> "05:23"
 function formatTime(t) {
   if (!t) return "";
@@ -632,9 +630,13 @@ function createTrainRow(item, isPast) {
     <!-- 中間：時間 + 所需時間 -->
     <div class="flex-1 px-2">
       <div class="flex items-baseline gap-2">
-        <div class="text-xl font-semibold">${formatTime(item.arrivalTimeStart)}</div>
+        <div class="text-xl font-semibold">${formatTime(
+          item.arrivalTimeStart
+        )}</div>
         <span class="text-gray-400 text-sm">→</span>
-        <div class="text-xl font-semibold">${formatTime(item.arrivalTimeEnd)}</div>
+        <div class="text-xl font-semibold">${formatTime(
+          item.arrivalTimeEnd
+        )}</div>
       </div>
       <div class="text-xs text-gray-500 mt-1">
         ${formatDuration(item.timeDiff)}
@@ -649,9 +651,6 @@ function createTrainRow(item, isPast) {
 
   return row;
 }
-
-
-
 
 function openResultModal(trains, queryTimeStr) {
   const modal = document.getElementById("resultModal");
@@ -677,12 +676,15 @@ function openResultModal(trains, queryTimeStr) {
   let firstFutureRow = null; // 第一個「尚未到站」的 row DOM
 
   trains.forEach((item) => {
-    // 這裡用出發站時間作比較
-    const departStr = formatTime(item.arrivalTimeStart); // "HH:mm"
-    const departMinutes = timeToMinutes(departStr);
+    // 依 timeType 決定用哪一個時間欄位
+    const timeRaw = timeQueryBtn.dataset.timeType === "0" ? item.arrivalTimeStart : item.arrivalTimeEnd;
+
+    // 這裡用選到的時間作比較
+    const timeStr = formatTime(timeRaw); // "HH:mm"
+    const timeMinutes = timeToMinutes(timeStr);
 
     const isPast =
-      queryMinutes != null && departMinutes != null && departMinutes < queryMinutes;
+      queryMinutes != null && timeMinutes != null && timeMinutes < queryMinutes;
 
     const row = createTrainRow(item, isPast);
     listEl.appendChild(row);
@@ -707,7 +709,6 @@ function openResultModal(trains, queryTimeStr) {
     });
   }
 }
-
 
 // 點背景關閉（不需要 X）
 document.getElementById("resultModal").addEventListener("click", (e) => {
